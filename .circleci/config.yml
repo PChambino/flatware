@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  test:
+    parameters:
+      ruby:
+        type: string
+    docker:
+      - image: cimg/ruby:<<parameters.ruby>>
+    steps:
+      - checkout
+      - run: bundle install
+      - run: rake lint
+      - run: rake spec
+      - run: rake cucumber
+      - run: bin/flatware rspec -l -w 2
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test:
+          matrix:
+            parameters:
+              ruby: ["3.3", "3.2"]
